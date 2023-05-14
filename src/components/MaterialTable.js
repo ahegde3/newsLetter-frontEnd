@@ -11,8 +11,9 @@ const MTable = (props) => {
         columns={columns}
         data={data}
         title={title}
-        onRowClick={(evt, selectedRow) =>
-          setSelectedRow(selectedRow.tableData.id)
+        onRowClick={
+          (evt, selectedRow) => console.log(selectedRow)
+          // setSelectedRow(selectedRow.tableData.id)
         }
         options={{
           search: false,

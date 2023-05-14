@@ -2,29 +2,41 @@
 // import styles from "./page.module.css";
 //import MTable from "./components/MaterialTable";
 
+import { useEffect, useState } from "react";
 import MTable from "../components/MaterialTable";
+import { getLetters } from "../api/newsLetter";
+import InsertLinkIcon from "@mui/icons-material/InsertLink";
 
 export default function Home() {
-  const newsLetter = [
-    {
-      title:
-        "BYD’s rise in China, First Republic goes to JPMorgan, and Apple’s health coaching service",
-      source: "Vested",
-      status: "UNREAD",
-    },
-    {
-      title:
-        "Why Is Everyone So Mean to Me? Overcoming NegativityExploring the reasons why individuals may behave in an unkind manner, it can help to detach oneself from such…",
-      link: "https://medium.com/@goodmenproject/why-is-everyone-so-mean-to-me-overcoming-negativity-1c9aaa103f5f?source=email-7bbdb3a883ed-1683924888305-digest.reader-1ab68867dfab-1c9aaa103f5f----3-2------------------705e105e_1bdb_4939_ab5b_3543125b23c2-31",
-      source: "Medium",
-      status: "UNREAD",
-    },
-  ];
+  const [letters, setLetters] = useState([]); //letters is an array of objects [{title,source,link,status},{title,source,link,status}
+  useEffect(() => {
+    getLetters().then((result) => {
+      //   console.log(result);
+      setLetters(
+        result.map((item) => ({
+          title: item.title,
+          source: item.source,
+          link: item.link,
+          status: item.status,
+        }))
+      );
+    });
+  }, []);
+
   //create columns with title,source,link,status as heading
   const columns = [
     { title: "Title", field: "title" },
     { title: "Source", field: "source" },
-    { title: "Link", filed: "link" },
+    {
+      title: "Link",
+      filed: "link",
+      render: (rowData) =>
+        rowData.link && (
+          <InsertLinkIcon
+            onClick={() => window.open(rowData.link, "_blank", "noreferrer")}
+          />
+        ),
+    },
     { title: "Status", field: "status" },
   ];
 
@@ -34,8 +46,8 @@ export default function Home() {
         <h1>My Newsletters</h1>
       </div> */}
       <div>
-        {" "}
-        <MTable columns={columns} data={newsLetter} title="My Newsletters" />
+        {console.log(letters)}
+        <MTable columns={columns} data={letters} title="My Newsletters" />
       </div>
 
       {/* <div>
