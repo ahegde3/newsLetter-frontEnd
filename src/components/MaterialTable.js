@@ -1,13 +1,14 @@
-import { useState } from "react";
-import MaterialTable from "material-table";
+import MUIDataTable from "mui-datatables";
+import { ThemeProvider, createTheme } from "@mui/material";
 
 const MTable = (props) => {
-  const [selectedRow, setSelectedRow] = useState(null);
+  //const [selectedRow, setSelectedRow] = useState(null);
   const { columns, data, title } = props;
+  const defaultMaterialTheme = createTheme();
 
   return (
     <div style={{ maxWidth: "100%" }}>
-      <MaterialTable
+      <MUIDataTable
         columns={columns}
         data={data}
         title={title}
@@ -16,11 +17,9 @@ const MTable = (props) => {
           // setSelectedRow(selectedRow.tableData.id)
         }
         options={{
-          search: false,
-          rowStyle: (rowData) => ({
-            backgroundColor:
-              selectedRow === rowData.tableData.id ? "#67aeae" : "#FFF",
-          }),
+          selectableRows: false,
+          print: false,
+          download: false,
         }}
       />
     </div>

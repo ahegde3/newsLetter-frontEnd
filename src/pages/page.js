@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import MTable from "../components/MaterialTable";
 import { getLetters } from "../api/newsLetter";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import { Select } from "@mui/material";
+import { MenuItem } from "@mui/material";
 
 export default function Home() {
   const [letters, setLetters] = useState([]); //letters is an array of objects [{title,source,link,status},{title,source,link,status}
   useEffect(() => {
     getLetters().then((result) => {
-      //   console.log(result);
       setLetters(
         result.map((item) => ({
           title: item.title,
@@ -25,20 +28,71 @@ export default function Home() {
 
   //create columns with title,source,link,status as heading
   const columns = [
-    { title: "Title", field: "title" },
-    { title: "Source", field: "source" },
+    { name: "title", label: "Title" },
+    { name: "source", label: "Source" },
     {
-      title: "Link",
-      filed: "link",
-      render: (rowData) =>
-        rowData.link && (
-          <InsertLinkIcon
-            onClick={() => window.open(rowData.link, "_blank", "noreferrer")}
-          />
-        ),
+      name: "link",
+      label: "Link",
+      options: {
+        customBodyRender: (rowData) =>
+          rowData?.link && (
+            <InsertLinkIcon
+              onClick={() => window.open(rowData.link, "_blank", "noreferrer")}
+            />
+          ),
+      },
     },
-    { title: "Status", field: "status" },
+    {
+      name: "status",
+      label: "Status",
+      options: {
+        customBodyRender: (value, tableMeta) =>
+          value && (
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={value}
+              label="Age"
+              onChange={(e) => setStatus(tableMeta.rowIndex, e.target.value)}
+            >
+              <MenuItem value={"UNREAD"}>UNREAD</MenuItem>
+              <MenuItem value={"READ"}>READ</MenuItem>
+            </Select>
+          ),
+      },
+    },
+    // {
+    //   name: "Change Status",
+    //   options: {
+    //     filter: true,
+    //     customBodyRender: (rowData) => {
+    //       console.log("RowData", rowData);
+    //       return (
+    //         <FormControlLabel
+    //           label={rowData?.status == "READ" ? "Yes" : "No"}
+    //           value={rowData?.status == "READ" ? "Yes" : "No"}
+    //           control={
+    //             <Switch
+    //               color="primary"
+    //               checked={rowData?.status == "UNREAD"}
+    //               value={rowData?.status == "READ" ? "Yes" : "No"}
+    //             />
+    //           }
+    //           onChange={(event) => {
+    //             console.log("RowData", rowData.status);
+    //           }}
+    //         />
+    //       );
+    //     },
+    //   },
+    // },
   ];
+
+  const setStatus = (index, value) => {
+    const letterCopy = [...letters];
+    letterCopy[index].status = value;
+    setLetters(letterCopy);
+  };
 
   return (
     <main style={styles.main}>
@@ -46,7 +100,6 @@ export default function Home() {
         <h1>My Newsletters</h1>
       </div> */}
       <div>
-        {console.log(letters)}
         <MTable columns={columns} data={letters} title="My Newsletters" />
       </div>
 
