@@ -15,4 +15,20 @@ const getLetters = () => {
   });
 };
 
-export { getLetters };
+const updateLetterReadStatus = (id, status) => {
+  console.log(id, status);
+  return fetch(`${BASE_URL}/newsLetter/updateLetterReadStatus`, {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "*/*",
+    },
+    body: JSON.stringify({ id, status }),
+  }).then((result) => {
+    if (result.ok) return result.json();
+    else return undefined;
+  });
+};
+
+export { getLetters, updateLetterReadStatus };
