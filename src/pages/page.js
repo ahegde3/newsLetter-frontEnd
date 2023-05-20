@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import MTable from "../components/MaterialTable";
-import { getLetters, updateLetterReadStatus } from "../api/newsLetter";
+import {
+  getLetters,
+  updateLetterReadStatus,
+  refreshLetters,
+} from "../api/newsLetter";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import { Select } from "@mui/material";
 import { MenuItem } from "@mui/material";
+import CachedIcon from "@mui/icons-material/Cached";
+import { Button } from "@mui/material";
 
 export default function Home() {
   const [letters, setLetters] = useState([]); //letters is an array of objects [{title,source,link,status},{title,source,link,status}
@@ -29,10 +35,10 @@ export default function Home() {
       name: "link",
       label: "Link",
       options: {
-        customBodyRender: (rowData) =>
-          rowData?.link && (
+        customBodyRender: (value) =>
+          value && (
             <InsertLinkIcon
-              onClick={() => window.open(rowData.link, "_blank", "noreferrer")}
+              onClick={() => window.open(value, "_blank", "noreferrer")}
             />
           ),
       },
@@ -56,31 +62,6 @@ export default function Home() {
           ),
       },
     },
-    // {
-    //   name: "Change Status",
-    //   options: {
-    //     filter: true,
-    //     customBodyRender: (rowData) => {
-    //       console.log("RowData", rowData);
-    //       return (
-    //         <FormControlLabel
-    //           label={rowData?.status == "READ" ? "Yes" : "No"}
-    //           value={rowData?.status == "READ" ? "Yes" : "No"}
-    //           control={
-    //             <Switch
-    //               color="primary"
-    //               checked={rowData?.status == "UNREAD"}
-    //               value={rowData?.status == "READ" ? "Yes" : "No"}
-    //             />
-    //           }
-    //           onChange={(event) => {
-    //             console.log("RowData", rowData.status);
-    //           }}
-    //         />
-    //       );
-    //     },
-    //   },
-    // },
   ];
 
   const setStatus = (index, value) => {
@@ -93,9 +74,17 @@ export default function Home() {
 
   return (
     <main style={styles.main}>
-      {/* <div>
+      <div style={styles.heading}>
         <h1>My Newsletters</h1>
-      </div> */}
+        <Button
+          style={styles.refreshContainer}
+          variant="outlined"
+          onClick={() => refreshLetters()}
+        >
+          <h3>Refresh</h3>
+          <CachedIcon style={styles.refreshButton} />
+        </Button>
+      </div>
       <div>
         <MTable columns={columns} data={letters} title="My Newsletters" />
       </div>
@@ -111,5 +100,18 @@ const styles = {
     alignItems: "center",
     padding: "6rem",
     minHeight: "100vh",
+  },
+  heading: {
+    display: "flex",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },
+  refreshContainer: {
+    display: "flex",
+    height: "42px",
+    top: "23px",
+  },
+  refreshButton: {
+    marginLeft: "4px",
   },
 };

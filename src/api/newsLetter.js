@@ -1,6 +1,5 @@
-// import { BASE_URL } from "../constants/api";
+import { BASE_URL } from "../constants/api";
 
-const BASE_URL = "http://localhost:8080";
 const getLetters = () => {
   return fetch(`${BASE_URL}/newsLetter/getLetters`, {
     method: "GET",
@@ -16,7 +15,6 @@ const getLetters = () => {
 };
 
 const updateLetterReadStatus = (id, status) => {
-  console.log(id, status);
   return fetch(`${BASE_URL}/newsLetter/updateLetterReadStatus`, {
     method: "POST",
     mode: "cors",
@@ -31,4 +29,15 @@ const updateLetterReadStatus = (id, status) => {
   });
 };
 
-export { getLetters, updateLetterReadStatus };
+const refreshLetters = (id, status) => {
+  return fetch(`${BASE_URL}/newsLetter/refreshLetters`, {
+    method: "GET",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "*/*",
+    },
+  });
+};
+
+export { getLetters, updateLetterReadStatus, refreshLetters };
