@@ -6,25 +6,16 @@ import {
   refreshLetters,
 } from "../api/newsLetter";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
-import { Select } from "@mui/material";
+import { CircularProgress, Select } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import CachedIcon from "@mui/icons-material/Cached";
 import { Button } from "@mui/material";
 
 export default function Home() {
   const [letters, setLetters] = useState([]); //letters is an array of objects [{title,source,link,status},{title,source,link,status}
+  const [onLoad, setOnLoad] = useState(true);
   useEffect(() => {
-    getLetters().then((result) => {
-      setLetters(
-        result.map((item) => ({
-          id: item._id,
-          title: item.title,
-          source: item.source,
-          link: item.link,
-          status: item.status,
-        }))
-      );
-    });
+    populateData();
   }, []);
 
   //create columns with title,source,link,status as heading
@@ -72,22 +63,54 @@ export default function Home() {
     setLetters(letterCopy);
   };
 
+  const onRefreshButtonClick = async () => {
+    setOnLoad(true);
+    refreshLetters();
+    //code for sleep for 10 seconds
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 5000);
+    }).then(populateData);
+  };
+
+  const populateData = async () => {
+    await getLetters().then((result) => {
+      setLetters(
+        result.map((item) => ({
+          id: item._id,
+          title: item.title,
+          source: item.source,
+          link: item.link,
+          status: item.status,
+        }))
+      );
+      setOnLoad(false);
+    });
+  };
+
   return (
     <main style={styles.main}>
-      <div style={styles.heading}>
-        <h1>My Newsletters</h1>
-        <Button
-          style={styles.refreshContainer}
-          variant="outlined"
-          onClick={() => refreshLetters()}
-        >
-          <h3>Refresh</h3>
-          <CachedIcon style={styles.refreshButton} />
-        </Button>
-      </div>
-      <div>
-        <MTable columns={columns} data={letters} title="My Newsletters" />
-      </div>
+      {onLoad ? (
+        <CircularProgress />
+      ) : (
+        <div>
+          <div style={styles.heading}>
+            <h1>My Newsletters</h1>
+            <Button
+              style={styles.refreshContainer}
+              variant="outlined"
+              onClick={() => onRefreshButtonClick()}
+            >
+              <h3>Refresh</h3>
+              <CachedIcon style={styles.refreshButton} />
+            </Button>
+          </div>
+          <div>
+            <MTable columns={columns} data={letters} title="My Newsletters" />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
